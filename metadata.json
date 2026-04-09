@@ -1,0 +1,7 @@
+{
+  "name": "Sussurro 5.0",
+  "description": "tradutor de voz para libras",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- PWA Meta Tags -->
+    <meta name="application-name" content="Sussurro" />
+    <meta name="description" content="Transcritor de voz em tempo real com tradução para Libras" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Sussurro" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <title>Sussurro - Transcrição em Tempo Real</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      /* Esconde caixas internas do VLibras que aparecem ao enviar texto */
+      [vp-rate-box],
+      [vp-suggestion-screen],
+      [vp-translator-screen],
+      [vp-more-options-screen],
+      .vpw-message-box,
+      .vp-guide-container,
+      [vp-main-guide-screen] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(() => console.log('[PWA] Service Worker registrado'))
+            .catch((err) => console.warn('[PWA] Erro no Service Worker:', err));
+        });
+      }
+    </script>
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+      <div vw-access-button class="active"></div>
+      <div vw-plugin-wrapper>
+        <div vp></div>
+      </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+      let vlibrasInstance;
+
+      function configurarVLibras() {
+        const botaoAcesso = document.querySelector('[vw-access-button]');
+        if (botaoAcesso && !botaoAcesso.dataset.autoClicked) {
+          botaoAcesso.dataset.autoClicked = 'true';
+          setTimeout(() => { botaoAcesso.click(); }, 500);
+        }
+
+        // Pula o guia inicial (botão "Não, obrigado")
+        const botaoNegar = document.querySelector('.vpw-guide__main__deny-btn');
+        if (botaoNegar && !botaoNegar.dataset.autoClicked) {
+          botaoNegar.dataset.autoClicked = 'true';
+          setTimeout(() => { botaoNegar.click(); }, 800);
+        }
+
+        // Pula a mensagem de boas-vindas (botão "Pular") em 3 tempos diferentes
+        const clicarPular = () => {
+          const botaoPular = document.querySelector('.vpw-skip-welcome-message');
+          if (botaoPular) botaoPular.click();
+        };
+        setTimeout(clicarPular, 3000);
+        setTimeout(clicarPular, 6000);
+        setTimeout(clicarPular, 10000);
+
+        const elementosParaEsconder = [
+          '.vpw-box',
+          '.vpw-controls-fullscreen',
+          '.vpw-more-options-button',
+          '.vpw-translator-button',
+          '[vp-suggestion-screen]',
+          '[vp-rate-box]',
+          '[vp-translator-screen]',
+          '.vpw-message-box',
+          '[vp-more-options-screen]',
+          '.vp-guide-container',
+          '[vp-main-guide-screen]',
+        ];
+
+        const observer = new MutationObserver(() => {
+          elementosParaEsconder.forEach(seletor => {
+            const el = document.querySelector(seletor);
+            if (el && !el.dataset.hidden) {
+              el.dataset.hidden = 'true';
+              el.style.setProperty('display', 'none', 'important');
+              el.style.setProperty('visibility', 'hidden', 'important');
+              el.style.setProperty('opacity', '0', 'important');
+            }
+          });
+
+          const wrapper = document.querySelector('[vw-plugin-wrapper]');
+          if (wrapper) {
+            const ajustarTamanho = () => {
+              const W = window.innerWidth;
+              const H = window.innerHeight;
+              const largura = W >= 768 ? W / 2 : W;
+              const altura = W >= 768 ? H : H / 2;
+
+              wrapper.style.setProperty('position', 'fixed', 'important');
+              wrapper.style.setProperty('top', '0', 'important');
+              wrapper.style.setProperty('right', '0', 'important');
+              wrapper.style.setProperty('width', `${largura}px`, 'important');
+              wrapper.style.setProperty('height', `${altura}px`, 'important');
+              wrapper.style.setProperty('min-width', `${largura}px`, 'important');
+              wrapper.style.setProperty('min-height', `${altura}px`, 'important');
+              wrapper.style.setProperty('border-radius', '0', 'important');
+              wrapper.style.setProperty('box-shadow', 'none', 'important');
+            };
+
+            ajustarTamanho();
+            setInterval(ajustarTamanho, 1000);
+            window.addEventListener('resize', ajustarTamanho);
+          }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+      }
+
+      function initVLibras() {
+        if (window.VLibras && window.VLibras.Widget) {
+          vlibrasInstance = new window.VLibras.Widget('https://vlibras.gov.br/app');
+          setTimeout(configurarVLibras, 1500);
+        } else {
+          setTimeout(initVLibras, 100);
+        }
+      }
+
+      initVLibras();
+    </script>
+  </body>
+</html>
