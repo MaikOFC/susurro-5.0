@@ -35,7 +35,7 @@ const TranscriptDisplay: React.FC<TranscriptDisplayProps> = ({
     >
       {transcripts.length === 0 && !currentTranscription && !isListening && (
         <div className="h-full flex flex-col items-center justify-center text-black dark:text-slate-400 space-y-2">
-          <p>Nenhuma transcrição ainda.</p>
+          <p>Nenhuma conversa ainda.</p>
           <p className="text-sm">Clique no microfone para começar.</p>
         </div>
       )}

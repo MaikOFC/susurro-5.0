@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sussurro-v2';
+const CACHE_NAME = 'sussurro-v3';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',

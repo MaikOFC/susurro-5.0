@@ -156,7 +156,7 @@ function App() {
             </div>
             <div>
               <h1 className="text-lg md:text-2xl font-bold tracking-tight leading-tight">Sussurro</h1>
-              <p className="text-xs md:text-sm opacity-60 leading-tight">Projeto Senac CE - Iguatu</p>
+              <p className="text-xs md:text-sm opacity-60 leading-tight">O barulho do silêncio</p>
             </div>
           </div>
 
