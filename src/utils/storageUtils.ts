@@ -1,9 +1,10 @@
-import { TranscriptLine, Theme } from '../types';
+import { TranscriptLine, Theme, VisualizerStyle } from '../types';
 
 const KEYS = {
   HISTORY: 'sussurro_history',
   THEME: 'sussurro_theme',
   CACHE_ENABLED: 'sussurro_cache_enabled',
+  VISUALIZER_STYLE: 'sussurro_visualizer_style',
 };
 
 export const storageUtils = {
@@ -38,5 +39,11 @@ export const storageUtils = {
     if (!enabled) {
       storageUtils.clearTranscripts();
     }
+  },
+  getVisualizerStyle: (): VisualizerStyle => {
+    return (localStorage.getItem(KEYS.VISUALIZER_STYLE) as VisualizerStyle) || 'wave';
+  },
+  setVisualizerStyle: (style: VisualizerStyle) => {
+    localStorage.setItem(KEYS.VISUALIZER_STYLE, style);
   }
 };

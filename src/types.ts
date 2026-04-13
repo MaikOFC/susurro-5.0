@@ -9,6 +9,8 @@ export interface TranscriptLine {
 
 export type Theme = 'light' | 'dark';
 
+export type VisualizerStyle = 'bars' | 'wave' | 'none';
+
 export enum ConnectionStatus {
   DISCONNECTED = 'disconnected',
   CONNECTING = 'connecting',

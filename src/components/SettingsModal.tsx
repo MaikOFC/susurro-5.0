@@ -1,12 +1,15 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Database, Trash2, ShieldCheck, ShieldAlert } from 'lucide-react';
+import { X, Database, Trash2, ShieldCheck, ShieldAlert, Activity } from 'lucide-react';
+import { VisualizerStyle } from '../types';
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
   isCacheEnabled: boolean;
   onToggleCache: (enabled: boolean) => void;
+  visualizerStyle: VisualizerStyle;
+  onVisualizerStyleChange: (style: VisualizerStyle) => void;
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -14,6 +17,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   onClose,
   isCacheEnabled,
   onToggleCache,
+  visualizerStyle,
+  onVisualizerStyleChange,
 }) => {
   const clearAppCache = async () => {
     if ('caches' in window) {
@@ -76,6 +81,31 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                     }`}
                   />
                 </button>
+              </div>
+
+              <div className="h-px bg-slate-100 dark:bg-slate-800" />
+
+              {/* Estilo do Visualizador */}
+              <div className="space-y-2">
+                <div className="flex items-center space-x-1.5">
+                  <Activity className="w-3.5 h-3.5 text-teal-500" />
+                  <h3 className="font-semibold text-[13px]">Estilo do Visualizador</h3>
+                </div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {(['wave', 'bars', 'none'] as VisualizerStyle[]).map((style) => (
+                    <button
+                      key={style}
+                      onClick={() => onVisualizerStyleChange(style)}
+                      className={`py-1.5 px-1 rounded-lg text-[10px] font-medium border transition-all ${
+                        visualizerStyle === style
+                          ? 'bg-teal-500 border-teal-500 text-white shadow-sm'
+                          : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-teal-500/50'
+                      }`}
+                    >
+                      {style === 'wave' ? 'Onda' : style === 'bars' ? 'Barras' : 'Nenhum'}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="h-px bg-slate-100 dark:bg-slate-800" />
